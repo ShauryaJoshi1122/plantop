@@ -1,236 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Plant Health AI | Shaurya Dev</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 
 body{
-    margin:0;
-    font-family:'Poppins',sans-serif;
-    background:linear-gradient(to bottom,#138808,#ffffff,#ff9933);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+margin:0;
+font-family:Poppins,sans-serif;
+background:linear-gradient(#138808,#fff,#ff9933);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
-.container{
-    background:white;
-    width:95%;
-    max-width:420px;
-    padding:25px;
-    border-radius:20px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.3);
-    text-align:center;
+.app{
+background:white;
+width:95%;
+max-width:450px;
+padding:20px;
+border-radius:20px;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+text-align:center;
 }
+
+/* Header */
 
 h1{
-    color:#138808;
+color:#138808;
+margin-bottom:5px;
 }
 
-.tagline{
-    font-size:14px;
-    color:#444;
-    margin-bottom:20px;
-}
-
-/* Upload Box */
-
-.upload-box{
-    border:2px dashed #138808;
-    padding:18px;
-    border-radius:15px;
-    cursor:pointer;
-    margin-bottom:15px;
-}
-
-.upload-box:hover{
-    background:#f0fff4;
-}
-
-input{
-    display:none;
-}
-
-/* Preview */
-
-#preview{
-    width:100%;
-    border-radius:15px;
-    display:none;
-    margin-bottom:15px;
+p{
+font-size:14px;
+color:#444;
 }
 
 /* Buttons */
 
 .btn{
-    width:100%;
-    background:linear-gradient(to right,#ff9933,#ffffff,#138808);
-    border:none;
-    padding:12px;
-    border-radius:25px;
-    font-size:16px;
-    font-weight:600;
-    cursor:pointer;
-    margin-top:10px;
+width:100%;
+padding:15px;
+margin:8px 0;
+border:none;
+border-radius:30px;
+font-size:16px;
+font-weight:600;
+background:linear-gradient(to right,#ff9933,#fff,#138808);
+cursor:pointer;
 }
 
-.btn:hover{
-    opacity:0.9;
+.btn:active{
+transform:scale(0.98);
+}
+
+/* Preview */
+
+#preview{
+width:100%;
+margin-top:15px;
+border-radius:15px;
+display:none;
 }
 
 /* Result */
 
 #result{
-    margin-top:20px;
-    padding:15px;
-    border-radius:15px;
-    background:#f8f8f8;
-    display:none;
+margin-top:15px;
+padding:15px;
+border-radius:15px;
+background:#f5f5f5;
+display:none;
+font-size:14px;
 }
 
 /* Footer */
 
 .footer{
-    margin-top:20px;
-    font-size:12px;
-    color:#555;
+margin-top:15px;
+font-size:12px;
+color:#555;
 }
 
 .footer span{
-    color:#138808;
-    font-weight:600;
+color:#138808;
+font-weight:600;
+}
+
+/* Hide Inputs */
+
+input{
+display:none;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
 <h1>🌱 Plant Health AI</h1>
-<p class="tagline">Smart Farming for India 🇮🇳</p>
+<p>Smart Farming for India 🇮🇳</p>
 
-<!-- CAMERA INPUT -->
-<label class="upload-box">
-📸 Open Camera
-<input type="file" id="cameraInput" accept="image/*" capture="environment">
-</label>
 
-<!-- GALLERY INPUT -->
-<label class="upload-box">
-🖼️ Choose from Gallery
-<input type="file" id="fileInput" accept="image/*">
-</label>
+<!-- CAMERA -->
+<button class="btn" onclick="openCamera()">📸 Open Camera</button>
+<input type="file" id="camera" accept="image/*" capture="environment">
+
+
+<!-- GALLERY -->
+<button class="btn" onclick="openGallery()">🖼️ Open Gallery</button>
+<input type="file" id="gallery" accept="image/*">
+
 
 <img id="preview">
 
-<button class="btn" onclick="analyze()">🔍 Check Plant Health</button>
+
+<button class="btn" onclick="analyze()">🔍 Check Health</button>
+
 
 <div id="result"></div>
 
+
 <div class="footer">
-Developed by <span>Shaurya Dev</span> ❤️<br>
-AI for Indian Farmers
+Made by <span>Shaurya Dev</span> ❤️
 </div>
 
 </div>
+
 
 <script>
 
 const apiKey="SCf1tCQX5w7UuDXoU8Tn8MacWc5A18IQErtCqrWhOhslUiBaPD";
 
-const cameraInput=document.getElementById("cameraInput");
-const fileInput=document.getElementById("fileInput");
+let selectedImage=null;
+
+const camera=document.getElementById("camera");
+const gallery=document.getElementById("gallery");
 const preview=document.getElementById("preview");
 const result=document.getElementById("result");
 
-let selectedFile=null;
 
-/* Camera */
+/* Open Camera */
+function openCamera(){
+camera.click();
+}
 
-cameraInput.addEventListener("change",function(){
-    loadImage(this.files[0]);
-});
-
-/* Gallery */
-
-fileInput.addEventListener("change",function(){
-    loadImage(this.files[0]);
-});
+/* Open Gallery */
+function openGallery(){
+gallery.click();
+}
 
 /* Load Image */
 
-function loadImage(file){
+camera.addEventListener("change",loadImage);
+gallery.addEventListener("change",loadImage);
 
-    if(!file) return;
+function loadImage(e){
 
-    selectedFile=file;
+const file=e.target.files[0];
 
-    const reader=new FileReader();
+if(!file) return;
 
-    reader.onload=function(){
-        preview.src=reader.result;
-        preview.style.display="block";
-    }
+selectedImage=file;
 
-    reader.readAsDataURL(file);
+const reader=new FileReader();
+
+reader.onload=function(){
+preview.src=reader.result;
+preview.style.display="block";
 }
+
+reader.readAsDataURL(file);
+
+}
+
 
 /* Analyze */
 
 async function analyze(){
 
-if(!selectedFile){
-    alert("Please take or upload photo 📸");
-    return;
+if(!selectedImage){
+alert("Please take or select photo 📸");
+return;
 }
 
 result.style.display="block";
-result.innerHTML="⏳ Checking plant health...";
+result.innerHTML="⏳ Checking plant...";
 
 const formData=new FormData();
-formData.append("images",selectedFile);
+formData.append("images",selectedImage);
 
 try{
 
 const res=await fetch("https://api.plant.id/v2/health_assessment",{
-    method:"POST",
-    headers:{
-        "Api-Key":apiKey
-    },
-    body:formData
+method:"POST",
+headers:{
+"Api-Key":apiKey
+},
+body:formData
 });
 
 const data=await res.json();
 
 if(data.health_assessment && data.health_assessment.diseases.length>0){
 
-let disease=data.health_assessment.diseases[0];
+let d=data.health_assessment.diseases[0];
 
 result.innerHTML=`
-<h3>🌿 Diagnosis</h3>
-<p><b>Disease:</b> ${disease.name}</p>
-<p><b>Confidence:</b> ${(disease.probability*100).toFixed(1)}%</p>
-<p><b>Advice:</b> ${disease.treatment.biological[0] || "Consult agriculture officer"}</p>
+<b>🌿 Disease:</b> ${d.name}<br>
+<b>Confidence:</b> ${(d.probability*100).toFixed(1)}%<br><br>
+<b>Advice:</b> ${d.treatment.biological[0] || "Contact Agriculture Officer"}
 `;
 
 }else{
 
-result.innerHTML="✅ Plant looks healthy 🌱";
+result.innerHTML="✅ Plant is Healthy 🌱";
 
 }
 
-}catch(e){
+}catch(err){
 
-result.innerHTML="⚠️ Network / API Error";
+result.innerHTML="⚠️ Internet / API Error";
 
 }
 
