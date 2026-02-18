@@ -10,129 +10,102 @@
 
 <style>
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: 'Poppins', sans-serif;
-}
-
 body{
-  background: linear-gradient(135deg,#43cea2,#185a9d);
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#333;
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(to bottom,#138808,#ffffff,#ff9933);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-/* Main Card */
-.app{
-  background:#fff;
-  width:100%;
-  max-width:420px;
-  border-radius:20px;
-  overflow:hidden;
-  box-shadow:0 20px 40px rgba(0,0,0,0.3);
+.container{
+    background:white;
+    width:95%;
+    max-width:420px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    text-align:center;
 }
 
-/* Header */
-.header{
-  background:linear-gradient(to right,#2ecc71,#27ae60);
-  padding:25px 15px;
-  text-align:center;
-  color:#fff;
+h1{
+    color:#138808;
 }
 
-.header h1{
-  font-size:22px;
-  font-weight:600;
+.tagline{
+    font-size:14px;
+    color:#444;
+    margin-bottom:20px;
 }
 
-.header p{
-  font-size:13px;
-  opacity:0.9;
-}
+/* Upload Box */
 
-/* Content */
-.content{
-  padding:20px;
-  text-align:center;
-}
-
-/* Upload */
 .upload-box{
-  border:2px dashed #27ae60;
-  border-radius:15px;
-  padding:20px;
-  cursor:pointer;
-  transition:0.3s;
+    border:2px dashed #138808;
+    padding:18px;
+    border-radius:15px;
+    cursor:pointer;
+    margin-bottom:15px;
 }
 
 .upload-box:hover{
-  background:#f2fff7;
+    background:#f0fff4;
 }
 
-.upload-box input{
-  display:none;
-}
-
-.upload-box span{
-  font-size:14px;
-  color:#555;
+input{
+    display:none;
 }
 
 /* Preview */
+
 #preview{
-  width:100%;
-  border-radius:15px;
-  margin-top:15px;
-  display:none;
+    width:100%;
+    border-radius:15px;
+    display:none;
+    margin-bottom:15px;
 }
 
-/* Button */
+/* Buttons */
+
 .btn{
-  background:linear-gradient(to right,#2ecc71,#27ae60);
-  border:none;
-  color:#fff;
-  padding:12px 25px;
-  border-radius:30px;
-  font-size:15px;
-  margin-top:15px;
-  cursor:pointer;
-  transition:0.3s;
+    width:100%;
+    background:linear-gradient(to right,#ff9933,#ffffff,#138808);
+    border:none;
+    padding:12px;
+    border-radius:25px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:10px;
 }
 
 .btn:hover{
-  transform:scale(1.05);
+    opacity:0.9;
 }
 
 /* Result */
-#result{
-  background:#f8f9fa;
-  border-radius:15px;
-  padding:15px;
-  margin-top:15px;
-  font-size:14px;
-  text-align:left;
-  display:none;
-}
 
-/* Loader */
-#loading{
-  display:none;
-  margin-top:10px;
-  font-size:14px;
-  color:#27ae60;
+#result{
+    margin-top:20px;
+    padding:15px;
+    border-radius:15px;
+    background:#f8f8f8;
+    display:none;
 }
 
 /* Footer */
+
 .footer{
-  text-align:center;
-  padding:10px;
-  font-size:12px;
-  color:#777;
-  background:#f1f1f1;
+    margin-top:20px;
+    font-size:12px;
+    color:#555;
+}
+
+.footer span{
+    color:#138808;
+    font-weight:600;
 }
 
 </style>
@@ -140,146 +113,126 @@ body{
 
 <body>
 
-<div class="app">
+<div class="container">
 
-  <!-- Header -->
-  <div class="header">
-    <h1>🌿 Plant Health AI</h1>
-    <p>Created by Shaurya Dev</p>
-  </div>
+<h1>🌱 Plant Health AI</h1>
+<p class="tagline">Smart Farming for India 🇮🇳</p>
 
-  <!-- Content -->
-  <div class="content">
+<!-- CAMERA INPUT -->
+<label class="upload-box">
+📸 Open Camera
+<input type="file" id="cameraInput" accept="image/*" capture="environment">
+</label>
 
-    <!-- Upload -->
-    <label class="upload-box">
-      📷 Tap to Upload Plant Image
-      <input type="file" id="fileInput" accept="image/*">
-      <br><br>
-      <span>Clear leaf photo gives best result</span>
-    </label>
+<!-- GALLERY INPUT -->
+<label class="upload-box">
+🖼️ Choose from Gallery
+<input type="file" id="fileInput" accept="image/*">
+</label>
 
-    <!-- Preview -->
-    <img id="preview">
+<img id="preview">
 
-    <!-- Button -->
-    <button class="btn" onclick="checkPlant()">
-      🔍 Analyze Plant
-    </button>
+<button class="btn" onclick="analyze()">🔍 Check Plant Health</button>
 
-    <!-- Loading -->
-    <div id="loading">
-      ⏳ AI is analyzing your plant...
-    </div>
+<div id="result"></div>
 
-    <!-- Result -->
-    <div id="result"></div>
-
-  </div>
-
-  <!-- Footer -->
-  <div class="footer">
-    © 2026 | Developed by Shaurya Dev 🌱
-  </div>
+<div class="footer">
+Developed by <span>Shaurya Dev</span> ❤️<br>
+AI for Indian Farmers
+</div>
 
 </div>
 
-
 <script>
 
-const API_KEY = "SCf1tCQX5w7UuDXoU8Tn8MacWc5A18IQErtCqrWhOhslUiBaPD";
+const apiKey="SCf1tCQX5w7UuDXoU8Tn8MacWc5A18IQErtCqrWhOhslUiBaPD";
 
-document.getElementById("fileInput").addEventListener("change", function(){
+const cameraInput=document.getElementById("cameraInput");
+const fileInput=document.getElementById("fileInput");
+const preview=document.getElementById("preview");
+const result=document.getElementById("result");
 
-  const file = this.files[0];
+let selectedFile=null;
 
-  if(file){
-    document.getElementById("preview").src = URL.createObjectURL(file);
-    document.getElementById("preview").style.display = "block";
-  }
+/* Camera */
 
+cameraInput.addEventListener("change",function(){
+    loadImage(this.files[0]);
 });
 
+/* Gallery */
 
-function checkPlant(){
+fileInput.addEventListener("change",function(){
+    loadImage(this.files[0]);
+});
 
-  const file = document.getElementById("fileInput").files[0];
+/* Load Image */
 
-  if(!file){
-    alert("Please upload image first!");
+function loadImage(file){
+
+    if(!file) return;
+
+    selectedFile=file;
+
+    const reader=new FileReader();
+
+    reader.onload=function(){
+        preview.src=reader.result;
+        preview.style.display="block";
+    }
+
+    reader.readAsDataURL(file);
+}
+
+/* Analyze */
+
+async function analyze(){
+
+if(!selectedFile){
+    alert("Please take or upload photo 📸");
     return;
-  }
+}
 
-  document.getElementById("loading").style.display="block";
-  document.getElementById("result").style.display="none";
+result.style.display="block";
+result.innerHTML="⏳ Checking plant health...";
 
-  let reader = new FileReader();
+const formData=new FormData();
+formData.append("images",selectedFile);
 
-  reader.onload = function(){
+try{
 
-    let base64 = reader.result.split(",")[1];
+const res=await fetch("https://api.plant.id/v2/health_assessment",{
+    method:"POST",
+    headers:{
+        "Api-Key":apiKey
+    },
+    body:formData
+});
 
-    fetch("https://api.plant.id/v2/identify",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Api-Key":API_KEY
-      },
-      body:JSON.stringify({
-        images:[base64],
-        modifiers:["crops_fast","similar_images"],
-        plant_language:"en",
-        plant_details:[
-          "common_names",
-          "wiki_description",
-          "taxonomy"
-        ]
-      })
-    })
+const data=await res.json();
 
-    .then(res=>res.json())
+if(data.health_assessment && data.health_assessment.diseases.length>0){
 
-    .then(data=>{
+let disease=data.health_assessment.diseases[0];
 
-      document.getElementById("loading").style.display="none";
+result.innerHTML=`
+<h3>🌿 Diagnosis</h3>
+<p><b>Disease:</b> ${disease.name}</p>
+<p><b>Confidence:</b> ${(disease.probability*100).toFixed(1)}%</p>
+<p><b>Advice:</b> ${disease.treatment.biological[0] || "Consult agriculture officer"}</p>
+`;
 
-      if(!data.suggestions || data.suggestions.length===0){
-        showResult("❌ No plant detected. Try clearer photo.");
-        return;
-      }
+}else{
 
-      let p = data.suggestions[0];
-
-      let html = `
-        <b>🌱 Name:</b> ${p.plant_name}<br>
-        <b>✅ Confidence:</b> ${(p.probability*100).toFixed(2)}%<br>
-        <b>📌 Common:</b> ${p.plant_details.common_names.join(", ")}<br><br>
-        <b>📖 Info:</b><br>
-        ${p.plant_details.wiki_description?.value || "No info available"}
-      `;
-
-      showResult(html);
-
-    })
-
-    .catch(()=>{
-      document.getElementById("loading").style.display="none";
-      showResult("❌ Network / API Error");
-    });
-
-  };
-
-  reader.readAsDataURL(file);
+result.innerHTML="✅ Plant looks healthy 🌱";
 
 }
 
+}catch(e){
 
-function showResult(text){
+result.innerHTML="⚠️ Network / API Error";
 
-  const box=document.getElementById("result");
-
-  box.innerHTML=text;
-  box.style.display="block";
+}
 
 }
 
