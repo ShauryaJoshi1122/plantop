@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Plant Health AI | Shaurya Dev</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body{
+  background: linear-gradient(135deg,#43cea2,#185a9d);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#333;
+}
+
+/* Main Card */
+.app{
+  background:#fff;
+  width:100%;
+  max-width:420px;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 20px 40px rgba(0,0,0,0.3);
+}
+
+/* Header */
+.header{
+  background:linear-gradient(to right,#2ecc71,#27ae60);
+  padding:25px 15px;
+  text-align:center;
+  color:#fff;
+}
+
+.header h1{
+  font-size:22px;
+  font-weight:600;
+}
+
+.header p{
+  font-size:13px;
+  opacity:0.9;
+}
+
+/* Content */
+.content{
+  padding:20px;
+  text-align:center;
+}
+
+/* Upload */
+.upload-box{
+  border:2px dashed #27ae60;
+  border-radius:15px;
+  padding:20px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.upload-box:hover{
+  background:#f2fff7;
+}
+
+.upload-box input{
+  display:none;
+}
+
+.upload-box span{
+  font-size:14px;
+  color:#555;
+}
+
+/* Preview */
+#preview{
+  width:100%;
+  border-radius:15px;
+  margin-top:15px;
+  display:none;
+}
+
+/* Button */
+.btn{
+  background:linear-gradient(to right,#2ecc71,#27ae60);
+  border:none;
+  color:#fff;
+  padding:12px 25px;
+  border-radius:30px;
+  font-size:15px;
+  margin-top:15px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.btn:hover{
+  transform:scale(1.05);
+}
+
+/* Result */
+#result{
+  background:#f8f9fa;
+  border-radius:15px;
+  padding:15px;
+  margin-top:15px;
+  font-size:14px;
+  text-align:left;
+  display:none;
+}
+
+/* Loader */
+#loading{
+  display:none;
+  margin-top:10px;
+  font-size:14px;
+  color:#27ae60;
+}
+
+/* Footer */
+.footer{
+  text-align:center;
+  padding:10px;
+  font-size:12px;
+  color:#777;
+  background:#f1f1f1;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🌿 Plant Health AI</h1>
+    <p>Created by Shaurya Dev</p>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Upload -->
+    <label class="upload-box">
+      📷 Tap to Upload Plant Image
+      <input type="file" id="fileInput" accept="image/*">
+      <br><br>
+      <span>Clear leaf photo gives best result</span>
+    </label>
+
+    <!-- Preview -->
+    <img id="preview">
+
+    <!-- Button -->
+    <button class="btn" onclick="checkPlant()">
+      🔍 Analyze Plant
+    </button>
+
+    <!-- Loading -->
+    <div id="loading">
+      ⏳ AI is analyzing your plant...
+    </div>
+
+    <!-- Result -->
+    <div id="result"></div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    © 2026 | Developed by Shaurya Dev 🌱
+  </div>
+
+</div>
+
+
+<script>
+
+const API_KEY = "SCf1tCQX5w7UuDXoU8Tn8MacWc5A18IQErtCqrWhOhslUiBaPD";
+
+document.getElementById("fileInput").addEventListener("change", function(){
+
+  const file = this.files[0];
+
+  if(file){
+    document.getElementById("preview").src = URL.createObjectURL(file);
+    document.getElementById("preview").style.display = "block";
+  }
+
+});
+
+
+function checkPlant(){
+
+  const file = document.getElementById("fileInput").files[0];
+
+  if(!file){
+    alert("Please upload image first!");
+    return;
+  }
+
+  document.getElementById("loading").style.display="block";
+  document.getElementById("result").style.display="none";
+
+  let reader = new FileReader();
+
+  reader.onload = function(){
+
+    let base64 = reader.result.split(",")[1];
+
+    fetch("https://api.plant.id/v2/identify",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Api-Key":API_KEY
+      },
+      body:JSON.stringify({
+        images:[base64],
+        modifiers:["crops_fast","similar_images"],
+        plant_language:"en",
+        plant_details:[
+          "common_names",
+          "wiki_description",
+          "taxonomy"
+        ]
+      })
+    })
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+      document.getElementById("loading").style.display="none";
+
+      if(!data.suggestions || data.suggestions.length===0){
+        showResult("❌ No plant detected. Try clearer photo.");
+        return;
+      }
+
+      let p = data.suggestions[0];
+
+      let html = `
+        <b>🌱 Name:</b> ${p.plant_name}<br>
+        <b>✅ Confidence:</b> ${(p.probability*100).toFixed(2)}%<br>
+        <b>📌 Common:</b> ${p.plant_details.common_names.join(", ")}<br><br>
+        <b>📖 Info:</b><br>
+        ${p.plant_details.wiki_description?.value || "No info available"}
+      `;
+
+      showResult(html);
+
+    })
+
+    .catch(()=>{
+      document.getElementById("loading").style.display="none";
+      showResult("❌ Network / API Error");
+    });
+
+  };
+
+  reader.readAsDataURL(file);
+
+}
+
+
+function showResult(text){
+
+  const box=document.getElementById("result");
+
+  box.innerHTML=text;
+  box.style.display="block";
+
+}
+
+</script>
+
+</body>
+</html>
